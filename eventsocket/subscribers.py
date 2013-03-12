@@ -1,10 +1,25 @@
-def get_subscribers(endpoint, event):
-    '''
-    Returns a list of subscibers matching the event
-    '''
-    return []
+import logging
+
+from eventsocket.loading import get_publisher
+
 
 class Subscriber(object):
+    def __init__(self, ident, publisher):
+        self.ident = ident
+        self.publisher_ident = publisher
+    
+    def get_id(self):
+        return self.ident
+    
+    def get_logger(self):
+        return logging.getLogger(__name__)
+    
+    def matches_event(self, endpoint, event):
+        '''
+        Return True if the subscriber should be notified of the event
+        '''
+        return False
+    
     def notify(self, endpoint, event, item_list):
         '''
         Receives event, serializes and schedules for publishing
@@ -21,7 +36,7 @@ class Subscriber(object):
         pass
     
     def get_publisher(self):
-        pass
+        return get_publisher(self.publisher_ident)
 
 #other possible subscribers
 

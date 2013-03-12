@@ -1,15 +1,18 @@
+import logging
+
 from eventsocket.tasks import schedule_publish
 
 
-def get_publisher(ident):
-    pass
-
 class Publisher(object):
-    schedule = True
+    def __init__(self, ident, schedule=True):
+        self.ident = ident
+        self.schedule = schedule
     
     def get_id(self):
-        pass
-        #possibly loaded from settings
+        return self.ident
+    
+    def get_logger(self):
+        return logging.getLogger(__name__)
     
     def push(self, message):
         '''

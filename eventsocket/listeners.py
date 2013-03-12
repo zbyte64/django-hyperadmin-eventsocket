@@ -1,6 +1,6 @@
 from hyperadmin.signals import endpoint_event, resource_event
 
-from eventsocket.subscribers import get_subscribers
+from eventsocket.loading import get_subscribers
 
 
 @endpoint_event.connect
