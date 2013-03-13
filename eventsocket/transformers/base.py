@@ -11,9 +11,9 @@ class Transformer(object):
     def get_logger(self):
         return logging.getLogger(__name__)
     
-    def transform(self, message):
+    def transform(self, event, message):
         '''
-        Returns a modified message
+        Returns a tuple of the modified event and message
         '''
-        return message
+        return event, message
 

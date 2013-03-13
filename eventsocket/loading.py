@@ -3,19 +3,23 @@ SUBSCRIBERS = dict()
 PUBLISHERS = dict()
 TRANSFORMERS = dict()
 
-def register_subscriber(klass, ident, publisher, kwargs):
+def register_subscriber(klass, ident, publisher, endpoints, events, kwargs):
     '''
     Registers a subsciber
     
     :param klass: The subsciber class in instantiate
     :param ident: The key to represent the subscriber
     :param publisher: The key of the desired publisher to use
+    :param endpoints: A list url url names matching the endpoint to listen to
+    :param events: A list of events to listen to
     :param kwargs: Extra params to pass to the subsciber
     '''
     params = dict(kwargs)
     params.update({
         'ident': ident,
         'publisher': publisher,
+        'endpoints': endpoints,
+        'events': events,
     })
     sub = klass(**params)
     SUBSCRIBERS[ident] = sub
@@ -59,7 +63,7 @@ def get_subscribers(endpoint, event):
     '''
     subs = list()
     for sub in SUBSCRIBERS.itervalues():
-        if sub.matches_event(endpoint, event):
+        if sub.matches_endpoint(endpoint) and sub.matches_event(event):
             subs.append(sub)
     return subs
 

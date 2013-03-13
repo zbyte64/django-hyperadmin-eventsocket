@@ -19,7 +19,7 @@ def get_defined_subscibers():
     result = dict()
     for key, sub in subs.items():
         klass = quick_import(sub.pop('BACKEND'))
-        sub = register_subscriber(klass, key, sub.pop('PUBLISHER'), sub)
+        sub = register_subscriber(klass, key, sub.pop('PUBLISHER'), sub.pop('ENDPOINTS'), sub.pop('EVENTS'), sub)
         result[key] = sub
     return result
 
