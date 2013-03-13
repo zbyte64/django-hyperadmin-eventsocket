@@ -1,12 +1,14 @@
 import logging
 
-from eventsocket.tasks import schedule_publish
+from eventsocket.tasks import schedule_push
+from eventsocket.loading import get_transformer
 
 
 class Publisher(object):
-    def __init__(self, ident, schedule=True):
+    def __init__(self, ident, transformer, schedule=True):
         self.ident = ident
         self.schedule = schedule
+        self.transformer_ident = transformer
     
     def get_id(self):
         return self.ident
@@ -14,20 +16,30 @@ class Publisher(object):
     def get_logger(self):
         return logging.getLogger(__name__)
     
+    def get_transformer(self):
+        return get_transformer(self.transformer_ident)
+    
     def push(self, message):
         '''
         Schedules the message to be sent to the publisher
         '''
         if self.schedule:
-            schedule_publish(self, message)
+            return schedule_push(self, message)
         else:
-            self.publish(message)
-        
+            return self._push(message)
+    
+    def _push(self, message):
+        message = self.transform(message)
+        return self.publish(message)
+    
+    def transform(self, message):
+        return self.get_transformer().transform(message)
+    
     def publish(self, message):
         '''
         Send the mesage to the publisher
         '''
-        pass
+        return message
 
 class HyperadminLinkPublisher(Publisher):
     '''

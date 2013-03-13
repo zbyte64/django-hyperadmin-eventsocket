@@ -1,6 +1,7 @@
 
 SUBSCRIBERS = dict()
 PUBLISHERS = dict()
+TRANSFORMERS = dict()
 
 def register_subscriber(klass, ident, publisher, kwargs):
     '''
@@ -20,7 +21,21 @@ def register_subscriber(klass, ident, publisher, kwargs):
     SUBSCRIBERS[ident] = sub
     return sub
 
-def register_publisher(klass, ident, kwargs):
+def register_transformer(klass, ident, kwargs):
+    '''
+    Registers a transformer
+    
+    :param klass: The transformer class in instantiate
+    :param ident: The key to represent the transformer
+    :param kwargs: Extra params to pass to the transformer
+    '''
+    params = dict(kwargs)
+    params['ident'] = ident
+    tran = klass(**params)
+    TRANSFORMERS[ident] = tran
+    return tran
+
+def register_publisher(klass, ident, transformer, kwargs):
     '''
     Registers a publisher
     
@@ -30,6 +45,10 @@ def register_publisher(klass, ident, kwargs):
     '''
     params = dict(kwargs)
     params['ident'] = ident
+    params.update({
+        'ident': ident,
+        'transformer': transformer,
+    })
     pub = klass(**params)
     PUBLISHERS[ident] = pub
     return pub
@@ -46,3 +65,7 @@ def get_subscribers(endpoint, event):
 
 def get_publisher(ident):
     return PUBLISHERS[ident]
+
+def get_transformer(ident):
+    return TRANSFORMERS[ident]
+
