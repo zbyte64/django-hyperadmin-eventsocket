@@ -29,6 +29,16 @@ class Publisher(object):
         '''
         pass
 
+class HyperadminLinkPublisher(Publisher):
+    '''
+    Submits the data to a hyperadmin link in the system
+    '''
+    def publish(self, message):
+        #get endpoint
+        #get endpoint link
+        #?match message to link form params?
+        pass
+
 class DjangoCachePublisher(Publisher):
     '''
     Uses django's cache framework.
@@ -44,22 +54,42 @@ class DjangoCachePublisher(Publisher):
         self.cache.set(self.cache_key, message)
 
 #and some possible 3rd party integrations:
-
 class RedisPublisher(Publisher):
     '''
     Uses Redis
     '''
+    def __init__(self, channel, host='localhost', port=6379, db=0, **kwargs):
+        import redis
+        self.channel = channel
+        self.pool = redis.ConnectionPool(host=host, port=port, db=db)
+        super(RedisPublisher, self).__init__(**kwargs)
+    
+    def get_connection(self):
+        import redis
+        return redis.Redis(connection_pool=self.pool)
+    
     def publish(self, message):
-        pass
+        connection = self.get_connection()
+        connection.publish(self.channel, message)
 
-class NginxPublisher(Publisher):
+class WebhookPublisher(Publisher):
+    '''
+    Publishes to a webhook
+    '''
+    def __init__(self, webhook_url, **kwargs):
+        self.webhook_url = webhook_url
+    
+    def publish(self, message):
+        import requests
+        #CONSIDER this may want the data in form-encoded format instead of json
+        response = requests.post(self.webhook_url, data=message, allow_redirects=False)
+
+class NginxPublisher(WebhookPublisher):
     '''
     Does a post to an nginx push stream:
     https://github.com/wandenberg/nginx-push-stream-module/
     '''
-    
-    def publish(self, message):
-        pass
+    pass #how is this different from a webhook?
 
 class PubnubPublisher(Publisher):
     '''
