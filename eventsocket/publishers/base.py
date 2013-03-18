@@ -1,4 +1,7 @@
 import logging
+import json
+
+from hyperadmin.mediatypes.encoders import HyperadminJSONEncoder
 
 from eventsocket.tasks import schedule_push, execute_push
 
@@ -31,6 +34,18 @@ class Publisher(object):
         Send the mesage to the publisher
         '''
         return message
+    
+    def serialize(self, payload):
+        '''
+        Serializes primitive python data types into json
+        '''
+        return json.dumps(payload, cls=HyperadminJSONEncoder)
+    
+    def deserialize(self, message):
+        '''
+        Deserializes a message into primitive python data types
+        '''
+        return json.loads(message)
 
 
 
