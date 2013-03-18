@@ -1,14 +1,12 @@
 import logging
 
-from eventsocket.tasks import schedule_push
-from eventsocket.loading import get_transformer
+from eventsocket.tasks import schedule_push, execute_push
 
 
 class Publisher(object):
-    def __init__(self, ident, transformer, schedule=True):
+    def __init__(self, ident, schedule=True):
         self.ident = ident
         self.schedule = schedule
-        self.transformer_ident = transformer
     
     def get_id(self):
         return self.ident
@@ -16,24 +14,17 @@ class Publisher(object):
     def get_logger(self):
         return logging.getLogger(__name__)
     
-    def get_transformer(self):
-        return get_transformer(self.transformer_ident)
-    
-    def push(self, event, message):
+    def push(self, transformer, event, message):
         '''
         Schedules the message to be sent to the publisher
         '''
         if self.schedule:
-            return schedule_push(self, event, message)
+            return schedule_push(transformer, self, event, message)
         else:
-            return self._push(event, message)
+            return execute_push(transformer.get_id(), self.get_id(), event, message)
     
     def _push(self, event, message):
-        event, message = self.transform(event, message)
         return self.publish(event, message)
-    
-    def transform(self, event, message):
-        return self.get_transformer().transform(event, message)
     
     def publish(self, event, message):
         '''
