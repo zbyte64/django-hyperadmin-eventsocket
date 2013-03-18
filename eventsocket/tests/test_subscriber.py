@@ -1,6 +1,7 @@
 from django.utils import unittest
 
 from eventsocket.tests.common import StackTestCase
+from eventsocket.loading import SUBSCRIBERS, get_subscribers
 
 
 class MockedEndpoint(object):
@@ -13,7 +14,7 @@ class MockedEndpoint(object):
 class TestSubscriber(StackTestCase):
     def setUp(self):
         super(TestSubscriber, self).setUp()
-        self.selective_subscriber = self.make_subscriber(transformer=self.transformer, publisher=self.publisher, endpoint='^another_url', event='^someotherevent$')
+        self.selective_subscriber = self.make_subscriber(transformer=self.transformer, publisher=self.publisher, endpoint='^another_url', event='^someotherevent$', ident='test-selectivesub')
     
     def test_empty_serialize(self):
         endpoint = None
@@ -32,4 +33,19 @@ class TestSubscriber(StackTestCase):
         self.assertTrue(self.subscriber.matches_event('someevent'))
         
         self.assertFalse(self.selective_subscriber.matches_event('someevent'))
+    
+    def test_get_subscribers(self):
+        assert SUBSCRIBERS, str(SUBSCRIBERS)
+        
+        endpoint = MockedEndpoint('this_url_name')
+        event = 'someevent'
+        results = get_subscribers(endpoint, event)
+        
+        self.assertEqual(len(results), 1)
+        
+        endpoint = MockedEndpoint('another_url')
+        event = 'someotherevent'
+        results = get_subscribers(endpoint, event)
+        
+        self.assertEqual(len(results), 2)
 

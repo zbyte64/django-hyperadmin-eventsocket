@@ -114,4 +114,14 @@ class Subscriber(object):
     
     def get_transformer(self):
         return get_transformer(self.transformer_ident)
+    
+    def __repr__(self):
+        return '<{cls}:{ident} event:{event}, endpoint:{endpoint}, publisher:{publisher}, transformer:{transformer}>'.format(
+            cls=type(self),
+            ident=self.ident,
+            event=self.event.pattern,
+            endpoint=self.endpoint.pattern,
+            publisher=self.publisher_ident,
+            transformer=self.transformer_ident,
+        )
 
