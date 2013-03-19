@@ -1,3 +1,9 @@
+from urlparse import parse_qsl
+
+from django.utils.datastructures import MultiValueDict
+
+from hyperadmin import get_api
+
 from eventsocket.publishers.base import Publisher
 
 
@@ -8,35 +14,35 @@ class HyperadminLinkPublisher(Publisher):
     
     def __init__(self, site, endpoint, method='POST', url_args=[], url_kwargs={}, **kwargs):
         '''
-        :param site: The django url name of the site
+        :param site: The django namespace of the site
         :param endpoint: The url name of the endpoint
         :param method: The HTTP method to use
         '''
-        self.site_urlname = site
+        self.site_namespace = site
         self.endpoint_urlname = endpoint
         self.method = method.upper()
         self.url_args = url_args
         self.url_kwargs = url_kwargs
         super(HyperadminLinkPublisher, self).__init__(**kwargs)
     
-    def publish(self, message):
+    def publish(self, event, message):
         endpoint = self.get_endpoint()
         
+        data = MultiValueDict(parse_qsl(message))
         params = {
             'payload': {
-                'data':message #TODO deserialize
-                #ie parse_sql => MultiValueDict
+                'data':data
+                #CONSIDER: how do we support files?
             },
             'method': self.method,
             'url_args': self.url_args,
             'url_kwargs': self.url_kwargs,
         }
-        #TODO this doesn't exist
         response = endpoint.internal_dispatch(**params)
         return response
     
     def get_site(self):
-        pass #TODO hyperadmin.get_api(self.site_urlname)
+        return get_api(self.site_namespace)
     
     def get_endpoint(self):
         site = self.get_site()
