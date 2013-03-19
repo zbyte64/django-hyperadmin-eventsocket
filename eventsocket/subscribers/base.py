@@ -78,9 +78,7 @@ class Subscriber(object):
         Returns the serialized message
         '''
         serializable_items = self.serialize_items(item_list)
-        message = {
-            'items': serializable_items,
-        }
+        message = serializable_items
         return json.dumps(message, cls=HyperadminJSONEncoder)
     
     def serialize_items(self, item_list):

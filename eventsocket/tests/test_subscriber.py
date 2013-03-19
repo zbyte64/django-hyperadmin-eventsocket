@@ -21,7 +21,7 @@ class TestSubscriber(StackTestCase):
         event = 'someevent'
         item_list = []
         message = self.subscriber.serialize(endpoint, event, item_list)
-        self.assertEqual(message, '{"items": []}')
+        self.assertEqual(message, '[]')
     
     def test_matches_endpoint(self):
         endpoint = MockedEndpoint('this_url_name')
