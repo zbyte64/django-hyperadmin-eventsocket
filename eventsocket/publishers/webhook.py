@@ -7,13 +7,14 @@ class WebhookPublisher(Publisher):
     '''
     Publishes to a webhook
     '''
-    def __init__(self, webhook_url, **kwargs):
+    def __init__(self, webhook_url, method='POST', **kwargs):
         self.webhook_url = webhook_url
+        self.method = method
     
     def publish(self, event, message):
-        
-        #CONSIDER this may want the data in form-encoded format instead of json
-        response = requests.post(self.webhook_url, data=message, allow_redirects=False)
+        action = getattr(requests, self.method.lower())
+        response = action(self.webhook_url, data=message, allow_redirects=False)
+        return response
 
 class NginxPublisher(WebhookPublisher):
     '''
