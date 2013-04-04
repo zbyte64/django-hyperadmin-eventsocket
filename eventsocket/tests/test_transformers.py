@@ -28,9 +28,9 @@ class TestTransformer(TestCase):
         self.assertEqual(payload, {})
     
     def test_passthrough(self):
-        event, message = self.transformer.transform('event', 'message')
+        event, message = self.transformer.transform('event', '{"message":"hello world"}')
         self.assertEqual(event, 'event')
-        self.assertEqual(message, 'message')
+        self.assertEqual(message, {'message':'hello world'})
 
 class TestSingleObjectTransformer(TestCase):
     def setUp(self):
@@ -48,7 +48,7 @@ class TestSingleObjectTransformer(TestCase):
         message = self.transformer.serialize(payload)
         r_event, r_message = self.transformer.transform(event, message)
         self.assertEqual(event, r_event)
-        self.assertEqual(self.transformer.deserialize(r_message), payload[0])
+        self.assertEqual(r_message, payload[0])
     
     def test_empty_transform(self):
         event = 'form_success'
@@ -56,7 +56,7 @@ class TestSingleObjectTransformer(TestCase):
         message = self.transformer.serialize(payload)
         r_event, r_message = self.transformer.transform(event, message)
         self.assertEqual(event, r_event)
-        self.assertEqual(r_message, '{}')
+        self.assertEqual(r_message, {})
 
 
 class TestFormTransformer(TestCase):

@@ -36,5 +36,5 @@ class Transformer(object):
         return event
     
     def transform_message(self, message):
-        return message
+        return self.deserialize(message)
 

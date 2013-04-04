@@ -25,7 +25,7 @@ class TestStack(StackTestCase):
         item_list = []
         response = self.subscriber.notify(endpoint, event, item_list)
         #the default behavior is to pass back a receipt representing the message sent
-        self.assertEqual(response, '[]')
+        self.assertEqual(response, [])
 
 class TestHyperadminPublishStack(StackTestCase):
     def make_publisher(self, cls=HyperadminLinkPublisher, **kwargs):

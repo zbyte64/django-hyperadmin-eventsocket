@@ -40,5 +40,7 @@ class FieldMapperMixin(object):
         return tdata
 
 class FormTransformer(SingleObjectMixin, FieldMapperMixin, FormMixin, Transformer):
-    pass
+    def transform_message(self, message):
+        payload = self.deserialize(message)
+        return self.serialize(payload)
 
