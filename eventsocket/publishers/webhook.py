@@ -11,7 +11,7 @@ class WebhookPublisher(Publisher):
         self.webhook_url = webhook_url
         self.method = method
     
-    def publish(self, event, message):
+    def publish(self, event, message, event_id):
         action = getattr(requests, self.method.lower())
         response = action(self.webhook_url, data=message, allow_redirects=False)
         return response

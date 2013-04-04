@@ -64,19 +64,27 @@ class Subscriber(object):
         '''
         return bool(self.event.match(event))
     
-    def notify(self, endpoint, event, item_list):
+    def notify(self, endpoint, event, item_list, event_id):
         '''
         Receives event, serializes and schedules for publishing
+        
+        :param endpoint: A hyperadmin endpoint bound to an api request
+        :param event: A string representing the event
+        :param item_list: A list of hypermedia items
+        :param event_id: A unique identifier representing the originating event
         '''
         message = self.serialize(endpoint, event, item_list)
         publisher = self.get_publisher()
         transformer = self.get_transformer()
-        return publisher.push(transformer, event, message)
+        return publisher.push(transformer, event, message, event_id)
     
     def serialize(self, endpoint, event, item_list):
         '''
         Returns the serialized message
         '''
+        #TODO:
+        #datatap = endpoint.get_datatap(instream=item_list)
+        #return JSONDataTap(instream=datatap) #dt.store(stream)
         serializable_items = self.serialize_items(item_list)
         message = serializable_items
         return json.dumps(message, cls=HyperadminJSONEncoder)

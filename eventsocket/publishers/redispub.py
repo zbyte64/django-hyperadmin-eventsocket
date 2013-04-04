@@ -15,6 +15,6 @@ class RedisPublisher(Publisher):
     def get_connection(self):
         return redis.Redis(connection_pool=self.pool)
     
-    def publish(self, event, message):
+    def publish(self, event, message, event_id):
         connection = self.get_connection()
         connection.publish(self.channel, message)

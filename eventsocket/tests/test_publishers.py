@@ -13,7 +13,7 @@ class TestPublisher(TestCase):
         self.publisher = self.make_publisher()
     
     def test_publish(self):
-        message = self.publisher.publish('event', 'message')
+        message = self.publisher.publish('event', 'message', 'uniqueid')
         self.assertEqual(message, 'message')
 
 class TestHyperadminLinkPublisher(TestCase):
@@ -22,7 +22,7 @@ class TestHyperadminLinkPublisher(TestCase):
         self.publisher = self.make_publisher(cls=HyperadminLinkPublisher, site='hyperadmin', endpoint='admin_auth_group_add')
     
     def test_publish(self):
-        response = self.publisher.publish('event', 'name=testgroup')
+        response = self.publisher.publish('event', 'name=testgroup', 'uniqueid')
         self.assertEqual(response.status_code, 303)
         self.assertTrue(response.has_header('Location'))
 

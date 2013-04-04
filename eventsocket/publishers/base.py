@@ -14,19 +14,19 @@ class Publisher(object):
     def get_logger(self):
         return logging.getLogger(__name__)
     
-    def push(self, transformer, event, message):
+    def push(self, transformer, event, message, event_id):
         '''
         Schedules the message to be sent to the publisher
         '''
         if self.schedule:
-            return schedule_push(transformer, self, event, message)
+            return schedule_push(transformer, self, event, message, event_id)
         else:
-            return execute_push(transformer.get_id(), self.get_id(), event, message)
+            return execute_push(transformer.get_id(), self.get_id(), event, message, event_id)
     
-    def _push(self, event, message):
-        return self.publish(event, message)
+    def _push(self, event, message, event_id):
+        return self.publish(event, message, event_id)
     
-    def publish(self, event, message):
+    def publish(self, event, message, event_id):
         '''
         Send the mesage to the publisher
         '''

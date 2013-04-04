@@ -12,7 +12,6 @@ class ElasticSearchPublisher(Publisher):
         self.index_name = index_name
         self.connection = ElasticSearch(self.elasticsearch_url)
     
-    def publish(self, event, message):
-        #id=id #CONSIDER: shouldn't messages have uuids?
-        response = self.connection.index(self.index_name, event, message)
+    def publish(self, event, message, event_id):
+        response = self.connection.index(self.index_name, event, message, id=event_id)
         return response

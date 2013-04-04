@@ -14,5 +14,5 @@ class DjangoCachePublisher(Publisher):
         self.cache_key = cache_key
         super(DjangoCachePublisher, self).__init__(**kwargs)
     
-    def publish(self, event, message):
+    def publish(self, event, message, event_id):
         self.cache.set(self.cache_key, message)

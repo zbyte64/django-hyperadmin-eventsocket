@@ -25,7 +25,7 @@ class HyperadminLinkPublisher(Publisher):
         self.url_kwargs = url_kwargs
         super(HyperadminLinkPublisher, self).__init__(**kwargs)
     
-    def publish(self, event, message):
+    def publish(self, event, message, event_id):
         endpoint = self.get_endpoint()
         
         data = MultiValueDict(parse_qsl(message))
