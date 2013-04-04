@@ -1,10 +1,35 @@
 from django.utils import unittest
+from django import forms
 
 from eventsocket.transformers.base import Transformer
 from eventsocket.publishers.base import Publisher
 from eventsocket.subscribers.base import Subscriber
 from eventsocket.loading import SUBSCRIBERS, PUBLISHERS, TRANSFORMERS
 
+from hyperadmin.datataps import HypermediaFormDataTap
+
+
+class MockedEndpoint(object):
+    def __init__(self, url_name):
+        self.url_name = url_name
+    
+    def get_url_name(self):
+        return self.url_name
+    
+    def get_datatap(self, instream=None, **kwargs):
+        return HypermediaFormDataTap(instream, **kwargs)
+
+class MockedItem(object):
+    def __init__(self, **values):
+        self.values = values
+    
+    def get_form(self):
+        form = forms.Form(initial=self.values)
+        for key, value in self.values.iteritems():
+            form.fields[key] = forms.CharField()
+        return form
+    
+    form = property(get_form)
 
 class TestCase(unittest.TestCase):
     '''

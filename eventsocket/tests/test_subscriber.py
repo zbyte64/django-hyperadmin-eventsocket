@@ -1,15 +1,6 @@
-from django.utils import unittest
-
-from eventsocket.tests.common import StackTestCase
+from eventsocket.tests.common import StackTestCase, MockedEndpoint
 from eventsocket.loading import SUBSCRIBERS, get_subscribers
 
-
-class MockedEndpoint(object):
-    def __init__(self, url_name):
-        self.url_name = url_name
-    
-    def get_url_name(self):
-        return self.url_name
 
 class TestSubscriber(StackTestCase):
     def setUp(self):
@@ -17,7 +8,7 @@ class TestSubscriber(StackTestCase):
         self.selective_subscriber = self.make_subscriber(transformer=self.transformer, publisher=self.publisher, endpoint='^another_url', event='^someotherevent$', ident='test-selectivesub')
     
     def test_empty_serialize(self):
-        endpoint = None
+        endpoint = MockedEndpoint('this_url_name')
         event = 'someevent'
         item_list = []
         message = self.subscriber.serialize(endpoint, event, item_list)

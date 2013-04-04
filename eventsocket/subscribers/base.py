@@ -1,11 +1,10 @@
 import logging
-import json
 import re
+import io
 
-from django.core.files import File
 from django import forms
 
-from hyperadmin.mediatypes.encoders import HyperadminJSONEncoder
+from datatap.datataps import JSONDataTap
 
 from eventsocket.loading import get_publisher, get_transformer
 
@@ -82,38 +81,11 @@ class Subscriber(object):
         '''
         Returns the serialized message
         '''
-        #TODO:
-        #datatap = endpoint.get_datatap(instream=item_list)
-        #return JSONDataTap(instream=datatap) #dt.store(stream)
-        serializable_items = self.serialize_items(item_list)
-        message = serializable_items
-        return json.dumps(message, cls=HyperadminJSONEncoder)
-    
-    def serialize_items(self, item_list):
-        serializable_items = list()
-        for item in item_list:
-            serializable_items.append(self.serialize_item(item))
-        return serializable_items
-    
-    #CONSIDER this is redundant in mediatype. Should factor this out
-    def serialize_item(self, item):
-        return self.get_form_instance_values(item.form)
-    
-    def prepare_field_value(self, val):
-        if isinstance(val, File):
-            if hasattr(val, 'name'):
-                val = val.name
-            else:
-                val = None
-        return val
-    
-    def get_form_instance_values(self, form):
-        data = dict()
-        for name, field in form.fields.iteritems():
-            val = form[name].value()
-            val = self.prepare_field_value(val)
-            data[name] = val
-        return data
+        datatap = endpoint.get_datatap(instream=item_list)
+        serialized_dt = JSONDataTap(instream=datatap)
+        payload = io.BytesIO()
+        serialized_dt.send(payload)
+        return payload.getvalue()
     
     def get_publisher(self):
         return get_publisher(self.publisher_ident)

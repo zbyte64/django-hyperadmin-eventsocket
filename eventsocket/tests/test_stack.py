@@ -1,26 +1,11 @@
-from django.utils import unittest
-from django import forms
-
-from eventsocket.tests.common import StackTestCase
+from eventsocket.tests.common import StackTestCase, MockedItem, MockedEndpoint
 from eventsocket.publishers.adminlink import HyperadminLinkPublisher
 from eventsocket.transformers.form import FormTransformer
 
 
-class MockedItem(object):
-    def __init__(self, **values):
-        self.values = values
-    
-    def get_form(self):
-        form = forms.Form(initial=self.values)
-        for key, value in self.values.iteritems():
-            form.fields[key] = forms.CharField()
-        return form
-    
-    form = property(get_form)
-
 class TestStack(StackTestCase):
     def test_simple_event(self):
-        endpoint = None
+        endpoint = MockedEndpoint('this_url_name')
         event = 'someevent'
         item_list = []
         response = self.subscriber.notify(endpoint, event, item_list, 'uniqueid')
@@ -37,7 +22,7 @@ class TestHyperadminPublishStack(StackTestCase):
         return super(TestHyperadminPublishStack, self).make_transformer(cls, **kwargs)
     
     def test_simple_event(self):
-        endpoint = None
+        endpoint = MockedEndpoint('this_url_name')
         event = 'someevent'
         item_list = [MockedItem(name='testgroup2')]
         response = self.subscriber.notify(endpoint, event, item_list, 'uniqueid')
